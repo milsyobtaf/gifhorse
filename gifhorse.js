@@ -19,6 +19,7 @@ program
   .action(function (input, output) {
     program.input = input;
     program.output = output.replace(/\.[^.]*$/, '');
+    program.filename = output.match(/[^\/]+(?=\.)/);
   })
   .parse(process.argv);
 
@@ -62,8 +63,8 @@ try {
   return ffmpegProcess.then(function (video) {
     logger.good('video processing is happening!');
     var format = program.annotation ? 'm4v' : 'gif';
-    var path = format === 'gif' ? './' : '/tmp/';
-    var filename = program.output + '.' + format;
+    var path = format === 'gif' ? '' : '/tmp/';
+    var filename = program.filename + '.' + format;
     video.addCommand('-ss', program.start || '00:00:00');
     video.addCommand('-t', program.duration || '99:99:99');
     video
