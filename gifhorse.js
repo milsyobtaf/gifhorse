@@ -7,21 +7,7 @@ var Ffmpeg = require('ffmpeg');
 var imagemagick = require('imagemagick');
 var chalk = require('chalk');
 
-program
-  .version(packageJson.version)
-  .usage('<input> [options] <output>')
-  .option('-s, --start [start]', 'Start time in clip probably something like 01:23:45')
-  .option('-d, --duration [duration]', 'Duration time for clip like 5 if you want it to be 5 seconds long')
-  .option('-w, --width [width]', 'Width in pixels that you want the thing to be')
-  .option('-f, --fps [fps]', 'Frames per Earth second')
-  .option('-a, --annotation [annotation]', 'Words to put on top of the pictures')
-  .option('-p, --pointsize [pointsize]', 'Size for the text to be')
-  .action(function (input, output) {
-    program.input = input;
-    program.output = output.replace(/\.[^.]*$/, '');
-    program.filename = output.match(/[^\/]+(?=\.)/);
-  })
-  .parse(process.argv);
+var cmdInput, cmdOutput;
 
 var logger = {
   good: function(message) {
@@ -33,6 +19,30 @@ var logger = {
     return console.log(horseHeadEmoji + '  ' + chalk.red('NEIGH: ' + message));
   }
 };
+
+program
+  .version(packageJson.version)
+  .usage('<input> [options] <output>')
+  .option('-s, --start [start]', 'Start time in clip probably something like 01:23:45')
+  .option('-d, --duration [duration]', 'Duration time for clip like 5 if you want it to be 5 seconds long')
+  .option('-w, --width [width]', 'Width in pixels that you want the thing to be')
+  .option('-f, --fps [fps]', 'Frames per Earth second')
+  .option('-a, --annotation [annotation]', 'Words to put on top of the pictures')
+  .option('-p, --pointsize [pointsize]', 'Size for the text to be')
+  .action(function (input, output) {
+    cmdInput = input;
+    cmdOutput = output;
+  })
+  .parse(process.argv);
+
+if (typeof cmdInput === 'object' || typeof cmdOutput === 'object') {
+  logger.bad('Input or output is missing! Do the -h thing!');
+  process.exit(1);
+} else {
+  program.input = cmdInput;
+  program.output = cmdOutput.replace(/\.[^.]*$/, '');
+  program.filename = cmdOutput.match(/[^\/]+(?=\.)/);
+}
 
 function annotate(file) {
   logger.good('words are being put on the thing!');
