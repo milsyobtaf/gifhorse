@@ -31,6 +31,21 @@ $ gifhorse <input> [options] <output>
 * `-a`, `--annotation`: Words to put on top of the pictures
 * `-p`, `--pointsize`: Size for the text to be
 
+## Example
+
+```
+$ gifhorse test.mp4 -s 3 -d 2 -w 160 -f 15 -a "idk what I'm doing" -p 30 test.gif
+```
+
+This command uses a video file called `test.mp4` to create a gif called `test.gif` with the following characteristics:
+
+- starts 3 seconds into the video
+- contains the next 2 seconds of the video
+- is 160 pixels wide
+- is 15 frames per second
+- has the text `idk what I'm doing`
+- has text that is 30 points in size
+
 ## Contributing
 
 See [Contributing](CONTRIBUTING.md).
