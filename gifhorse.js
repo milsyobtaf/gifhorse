@@ -87,7 +87,7 @@ try {
     '-y', program.annotationPath ? program.annotationPath : program.output
   ].join(' '), program.annotation
     ? annotate
-    : logger.good(path + ' exists now probably!')
+    : logger.good(program.output + ' exists now probably!')
   );
 
 } catch (exception) {
