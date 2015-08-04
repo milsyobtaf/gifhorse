@@ -29,6 +29,7 @@ program
   .option('-w, --width [width]', 'Width in pixels that you want the thing to be')
   .option('-f, --fps [fps]', 'Frames per Earth second')
   .option('-a, --annotation [annotation]', 'Words to put on top of the pictures')
+  .option('-F, --fontface [fontface]', 'The font to do the words in')
   .option('-p, --pointsize [pointsize]', 'Size for the text to be')
   .action(function (input, output) {
     cmdInput = input;
@@ -48,10 +49,9 @@ if (typeof cmdInput !== 'string' || typeof cmdOutput !== 'string') {
 function annotate(file) {
   logger.good('words are being put on the thing!');
   var pointsize = program.pointsize || 15;
-  return imagemagick.convert([
+  var options = [
     file,
     '-pointsize', pointsize,
-    '-font', 'HelveticaNeueB',
     '-strokewidth', '2',
     '-stroke', 'black',
     '-fill', 'white',
@@ -60,7 +60,9 @@ function annotate(file) {
     '-stroke', 'none',
     '-annotate', '+0+' + pointsize / 2, program.annotation,
     program.output + '.gif'
-  ], function(error) {
+  ];
+  program.fontface && options.splice(3, 0, '-font', program.fontface);
+  return imagemagick.convert(options, function(error) {
     fs.unlink(file);
     !error
       ? logger.good(program.output + '.gif exists now probably!')
