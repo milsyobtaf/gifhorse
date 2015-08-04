@@ -14,6 +14,8 @@ If you are having an issue, [search open issues](https://github.com/flipstewart/
 0. Open a [Pull Request](http://github.com/flipstewart/gifhorse/pulls)
 0. Enjoy a refreshing Lone Star and wait
 
+![waitin' on that pr](CONTRIBUTING.jpg)
+
 ## Linting
 
 To run the tests:
