@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 var fs = require('fs');
+var crypto = require('crypto');
 var packageJson = require('./package.json');
 var program = require('commander');
 var Ffmpeg = require('ffmpeg');
@@ -12,11 +13,11 @@ var cmdInput, cmdOutput;
 var logger = {
   good: function(message) {
     var horseEmoji = '🐎';
-    return console.log(horseEmoji + '  ' + chalk.green('clop clop: ' + message));
+    return console.log(horseEmoji + chalk.green('  clop clop: ' + message));
   },
   bad: function(message) {
     var horseHeadEmoji = '🐴';
-    return console.log(horseHeadEmoji + '  ' + chalk.red('NEIGH: ' + message));
+    return console.log(horseHeadEmoji + chalk.red('  NEIGH: ' + message));
   }
 };
 
@@ -60,11 +61,10 @@ function annotate(file) {
     '-annotate', '+0+' + pointsize / 2, program.annotation,
     program.output + '.gif'
   ], function(error) {
-    if (!error) {
-      logger.good(program.output + '.gif exists now probably!');
-      return fs.unlink(file);
-    }
-    return logger.bad(error);
+    fs.unlink(file);
+    !error
+      ? logger.good(program.output + '.gif exists now probably!')
+      : logger.bad(error);
   });
 }
 
@@ -72,28 +72,27 @@ try {
   var ffmpegProcess = new Ffmpeg(program.input);
   return ffmpegProcess.then(function (video) {
     logger.good('video processing is happening!');
-    var format = program.annotation ? 'm4v' : 'gif';
-    var path = format === 'gif' ? '' : '/tmp/';
-    var filename = program.filename + '.' + format;
+    var path = program.annotation
+      ? '/tmp/' + (crypto.randomBytes(20).toString('hex')) + '.m4v'
+      : program.filename + '.gif';
     video.addCommand('-ss', program.start || '00:00:00');
     video.addCommand('-t', program.duration || '99:99:99');
     video
-      .setVideoFormat(format)
       .setDisableAudio()
       .setVideoSize(program.width ? program.width + 'x?' : '320x?', true, false)
       .setVideoFrameRate(program.fps || 15)
-      .save(path + filename, function (error, file) {
-        if (!error) {
-          return program.annotation ? annotate(file) : logger.good(file + ' exists now probably!');
-        }
-        return logger.bad(error);
+      .save(path, function (error, file) {
+        return !error
+          ? program.annotation
+            ? annotate(file)
+            : logger.good(file + ' exists now probably!')
+          : logger.bad(error);
       });
   }, function (error) {
     return logger.bad(error);
   });
 } catch (exception) {
-  if (exception.code) {
-    return logger.bad(exception.code + ' ' + exception.msg);
-  }
-  return logger.bad(exception);
+  return exception.code
+    ? logger.bad(exception.code + ' ' + exception.msg)
+    : logger.bad(exception);
 }
