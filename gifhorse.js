@@ -35,7 +35,7 @@ program
   })
   .parse(process.argv);
 
-if (typeof cmdInput === 'object' || typeof cmdOutput === 'object') {
+if (typeof cmdInput !== 'string' || typeof cmdOutput !== 'string') {
   logger.bad('Input or output is missing! Do the -h thing!');
   process.exit(1);
 } else {
