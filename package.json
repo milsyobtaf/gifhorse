@@ -1,6 +1,6 @@
 {
   "name": "gifhorse",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "a CLI for making gifs(maybe with annotations) from video files",
   "main": "gifhorse.js",
   "bin": {
